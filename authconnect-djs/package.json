@@ -1,0 +1,22 @@
+{
+  "name": "authconnect-djs",
+  "version": "1.0.0",
+  "description": "Plug-and-play solution for adding Google, Spotify, etc auth to your DiscordJS projects where you access external APIs.",
+  "main": "index.js",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericyoondotcom/AuthConnectDJS.git"
+  },
+  "keywords": [
+    "discord",
+    "discord-js",
+    "oauth2"
+  ],
+  "author": "Yoonicode",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/ericyoondotcom/AuthConnectDJS/issues"
+  },
+  "homepage": "https://github.com/ericyoondotcom/AuthConnectDJS#readme"
+}
