@@ -26,17 +26,18 @@ bot.on("ready", () => {
 
 bot.on("message", async message => {
     if(message.guild !== null && message.content === "login" && message.member.permissions.has("ADMINISTRATOR")) {
-        if(auth.isGuildLoggedIn("google", message.guild.id)) {
+        if(await auth.isGuildLoggedIn("google", message.guild.id)) {
             message.channel.send("This server already has a Google account associated with it.");
         } else {
-            const url = await auth.generateAuthURL("google", message.guild.id);
+            // Replace `https://www.googleapis.com/auth/youtube` with the scopes you want to request: https://developers.google.com/identity/protocols/oauth2/scopes
+            const url = auth.generateAuthURL("google", message.guild.id, "YOUR_GOOGLE_CLIENT_ID", "https://www.googleapis.com/auth/youtube");
             message.member.send(`Please visit this URL to log in: ${url}`); // DM the link to the admin
         }
     }
 
     if(message.content === "call an API") {
-        if(auth.isGuildLoggedIn("google", message.guild.id)) {
-            const token = await auth.getAccessToken("google", message.guild.id);
+        if(await auth.isGuildLoggedIn("google", message.guild.id)) {
+            const token = auth.getAccessToken("google", message.guild.id);
             // Now you can use this token to call Google APIs!
         }
     }
@@ -72,7 +73,7 @@ Parameter | Type | Description
 
 Creates the AuthConnect object. **Only call this function after your Discord bot has called the "ready" callback.**
 
-### isGuildLoggedIn(service, guildId): boolean
+### async isGuildLoggedIn(service, guildId): boolean
 Parameter | Type | Description
 --- | --- | ---
 `service` | string | The service to check (e.g. "google", "spotify").
@@ -80,11 +81,13 @@ Parameter | Type | Description
 
 Checks if a guild has an account for a particular service associated with it.
 
-### generateAuthUrl(service, guildId): string
+### generateAuthUrl(service, guildId, clientId, scope): string
 Parameter | Type | Description
 --- | --- | ---
 `service` | string | The service to check (e.g. "google", "spotify").
 `guildId` | string resolvable | The guild to check.
+`clientId` | string | The client ID of your app for the service. See the service's documentation for how to get this. This string is directly passed as a URL parameter to the service's auth URL.
+`scope` | string | The scopes to request from the service. See the service's documentation for a list of scopes. This string is directly passed as a URL parameter to the service's auth URL.
 
 Generates an authorization URL for a guild admin to visit to link their account. This URL should then be sent to the guild admin via DM.
 
