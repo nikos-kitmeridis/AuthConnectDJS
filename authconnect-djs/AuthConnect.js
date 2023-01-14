@@ -11,24 +11,24 @@ export default class AuthConnect {
     #firebaseApp;
     #functions;
     #pollFunction;
+    #serviceConstants;
     #activePolling = [
         /*
         {
             guildId: string,
             service: string,
-            clientId: string,
-            clientSecret: string,
             state: string,
             expires: Date
         }
         */
     ];
 
-    constructor() {
+    constructor(serviceConstants) {
         this.#setPollingInterval();
         this.#firebaseApp = initializeApp(FIREBASE_CONFIG);
         this.#functions = getFunctions(this.#firebaseApp);
         this.#pollFunction = httpsCallable(this.#functions, "pollForAuthResult");
+        this.#serviceConstants = serviceConstants;
     }
 
     #setPollingInterval() {
@@ -48,7 +48,7 @@ export default class AuthConnect {
                     if(!res.data.code) return;
                     
                     this.#activePolling.splice(this.#activePolling.indexOf(poll), 1);
-                    this.#exchangeCode(poll.service, poll.guildId, poll.clientId, poll.clientSecret, res.data.code);
+                    this.#exchangeCode(poll.service, poll.guildId, res.data.code);
                 }, (e) => {
                     console.error("Error polling for auth result");
                     console.error(e);
@@ -58,11 +58,12 @@ export default class AuthConnect {
         }, POLL_INTERVAL);
     }
 
-    async #exchangeCode(service, guildId, clientId, clientSecret, code) {
+    async #exchangeCode(service, guildId, code) {
         const serviceData = SERVICES[service];
-        if(!serviceData) {
-            throw new Error("Invalid service: " + service);
-        }
+        if(!serviceData) throw new Error("Invalid service: " + service);
+        const serviceConstantsData = this.#serviceConstants[service];
+        if(!serviceConstantsData) throw new Error("No service constants found for service " + service + ". Did you forget to pass them to the constructor?");
+
         const result = await fetch(serviceData.authCodeExchangeUrl, {
             method: "POST",
             headers: {
@@ -72,8 +73,8 @@ export default class AuthConnect {
                 grant_type: "authorization_code",
                 code,
                 redirect_uri: WEB_REDIRECT_URL,
-                client_id: clientId,
-                client_secret: clientSecret
+                client_id: serviceConstantsData.clientId,
+                client_secret: serviceConstantsData.clientSecret
             })
         });
         const json = await result.json();
@@ -111,22 +112,22 @@ export default class AuthConnect {
         return await this.#onDataGet(service, guildId) != null;
     }
 
-    generateAuthURL(service, guildId, clientId, clientSecret, scope) {
+    generateAuthURL(service, guildId, scope) {
         const serviceData = SERVICES[service];
         if(!serviceData) throw new Error("Invalid service argument.");
+        const serviceConstantsData = this.#serviceConstants[service];
+        if(!serviceConstantsData) throw new Error("No service constants found for service " + service + ". Did you forget to pass them to the constructor?");
 
         const state = generateRandomString();
         this.#activePolling.push({
             service,
             guildId,
-            clientId,
-            clientSecret,
             state,
             expires: new Date(Date.now() + POLL_EXPIRY)
         })
         
         const url = serviceData.authUrl
-            .replace("{{CLIENT_ID}}", encodeURIComponent(clientId))
+            .replace("{{CLIENT_ID}}", encodeURIComponent(serviceConstantsData.clientId))
             .replace("{{REDIR}}", encodeURIComponent(WEB_REDIRECT_URL))
             .replace("{{SCOPE}}", encodeURIComponent(scope))
             .replace("{{STATE}}", encodeURIComponent(state));

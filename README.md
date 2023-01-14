@@ -16,38 +16,7 @@ Coming soon to NPM!
 
 # Quickstart: Example Usage
 ```js
-import DiscordAPI from "discord.js";
-import AuthConnect from "authconnect-djs";
-
-const bot = new Client( /* ... */ );
-let auth;
-
-bot.login(DISCORD_TOKEN);
-
-bot.on("ready", () => {
-    auth = new AuthConnect(bot);
-    auth.useDefaultDataHandlers("./auth-data.json"); // Use the default local file data storage solution
-});
-
-bot.on("messageCreate", async message => {
-    if(message.guild !== null && message.content === "login" && message.member.permissions.has("ADMINISTRATOR")) {
-        if(await auth.isGuildLoggedIn("google", message.guild.id)) {
-            message.channel.send("This server already has a Google account associated with it.");
-        } else {
-            // Replace `https://www.googleapis.com/auth/youtube` with the scopes you want to request: https://developers.google.com/identity/protocols/oauth2/scopes
-            const url = auth.generateAuthURL("google", message.guild.id, "YOUR_GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_SECRET", "https://www.googleapis.com/auth/youtube");
-            message.member.send(`Please visit this URL to log in: ${url}`); // DM the link to the admin
-        }
-    }
-
-    if(message.content === "call an API") {
-        if(await auth.isGuildLoggedIn("google", message.guild.id)) {
-            const token = auth.getAccessToken("google", message.guild.id);
-            // Now you can use this token to call Google APIs!
-        }
-    }
-});
-
+TODO
 ```
 
 # Extensibility and Avanced Usage
@@ -72,8 +41,27 @@ These callbacks will be called every time token data is requested or updated, so
 ## class AuthConnect
 
 ### constructor(client)
+Parameter | Type | Description
+--- | --- | ---
+`serviceConstants` | object (see below) | An object with your client IDs and secrets for each service.
 
 Creates the AuthConnect object.
+
+#### serviceConstants
+The `serviceConstants` object should be in the following format:
+```js
+{
+    google: {
+        clientId: string,
+        clientSecret: string
+    },
+    spotify: {
+        clientId: string,
+        clientSecret: string
+    },
+    /* ... */
+}
+```
 
 ### async isGuildLoggedIn(service, guildId): boolean
 Parameter | Type | Description
