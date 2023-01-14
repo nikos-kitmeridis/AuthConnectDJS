@@ -9,6 +9,7 @@
   "author": "Yoonicode",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
+    "discord.js": "^14.7.1",
     "fs": "^0.0.1-security",
     "jest": "^29.3.1"
   }

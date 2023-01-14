@@ -9,12 +9,17 @@ WIP
 ## Installation
 Coming soon to NPM!
 
+## Google Cloud setup
+1. From the Google Cloud Console, go to `APIs & Services` > `Credentials`.
+2. Add an OAuth Client ID.
+3. Add the following string as an Authorized Redirect URI: `https://authconnect-djs.web.app/redir.html`. This will allow your app to redirect to our website which will beam the data to your Discord bot.
+
 ## Quickstart: Example Usage
 ```js
 import DiscordAPI from "discord.js";
 import AuthConnect from "authconnect-djs";
 
-const bot = new DiscordAPI.Client();
+const bot = new Client( /* ... */ );
 let auth;
 
 bot.login(DISCORD_TOKEN);
@@ -24,7 +29,7 @@ bot.on("ready", () => {
     auth.useDefaultDataHandlers("./auth-data.json"); // Use the default local file data storage solution
 });
 
-bot.on("message", async message => {
+bot.on("messageCreate", async message => {
     if(message.guild !== null && message.content === "login" && message.member.permissions.has("ADMINISTRATOR")) {
         if(await auth.isGuildLoggedIn("google", message.guild.id)) {
             message.channel.send("This server already has a Google account associated with it.");
@@ -67,11 +72,8 @@ These callbacks will be called every time token data is requested or updated, so
 ### class AuthConnect
 
 #### constructor(client)
-Parameter | Type | Description
---- | --- | ---
-`client` | `DiscordJS.Client` | Your DiscordJS client object.
 
-Creates the AuthConnect object. **Only call this function after your Discord bot has called the "ready" callback.**
+Creates the AuthConnect object.
 
 ### async isGuildLoggedIn(service, guildId): boolean
 Parameter | Type | Description
@@ -81,7 +83,7 @@ Parameter | Type | Description
 
 Checks if a guild has an account for a particular service associated with it.
 
-### generateAuthUrl(service, guildId, clientId, scope): string
+### generateAuthURL(service, guildId, clientId, scope): string
 Parameter | Type | Description
 --- | --- | ---
 `service` | string | The service to check (e.g. "google", "spotify").
@@ -90,6 +92,9 @@ Parameter | Type | Description
 `scope` | string | The scopes to request from the service. See the service's documentation for a list of scopes. This string is directly passed as a URL parameter to the service's auth URL.
 
 Generates an authorization URL for a guild admin to visit to link their account. This URL should then be sent to the guild admin via DM.
+
+The user will be redirected to a Yoonicode-owned website which will upload their account token to our servers.
+AuthConnect will then poll our servers for data every 5 seconds for 5 minutes, at which point you should consider the URL expired and have the user request a new one.
 
 ### getAccessToken(service, guildId): string
 Parameter | Type | Description
@@ -106,6 +111,8 @@ Parameter | Type | Description
 `onDataUpdate` | function (see below) | A callback that should update the data for a guild.
 
 Overrides the default local file data storage solution (see "Custom data storage solution"). Call this function right after you call the constructor.
+
+**Make sure you call `.bind()` on the functions you supply!**
 
 #### async onDataGet(service, guildId): object
 This function should take two parameters, `service` and `guildId`, and return a Promise that returns the guild's data for the given service (e.g. "google", "spotify"), in the following format:

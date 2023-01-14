@@ -1,4 +1,6 @@
 export const WEB_REDIRECT_URL = "https://authconnect-djs.web.app/redir.html";
+export const POLL_INTERVAL = 1000 * 5;
+export const POLL_EXPIRY = 1000 * 60 * 5;
 
 export const SERVICES = {
     spotify: {
@@ -9,4 +11,4 @@ export const SERVICES = {
     }
 };
 
-export const generateRandomString = () => Math.random().toString(36).substring(7);
+export const generateRandomString = () => Math.random().toString(36).substring(2);

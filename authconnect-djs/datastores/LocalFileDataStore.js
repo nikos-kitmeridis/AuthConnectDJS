@@ -31,6 +31,7 @@ export default class LocalFileDataStore {
     }
 
     async onDataGet(service, guildId) {
+        console.log("on data get")
         if(!(guildId in this.#data) || !(service in this.#data[guildId]))
             return null;
         const serviceData = this.#data[guildId][service];
