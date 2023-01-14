@@ -1,23 +1,54 @@
 import fs from "fs";
 
 export default class LocalFileDataStore {
-    async onDataGet(service, guildId) {
-        // TODO: Retrieve guild token info from local file (default behavior)
-        return {
-            google: {
-                refreshToken: "123",
-                accessToken: "xyz",
-                expiryDate: new Date()
-            },
-            spotify: {
-                refreshToken: "123",
-                accessToken: "xyz",
-                expiryDate: new Date()
+    #data = {};
+    #filePath = "";
+
+    constructor(filePath) {
+        this.#filePath = filePath;
+    }
+    
+    // NOTE: initalizeFile() is NOT automatically called by constructor because it is async.
+    // You must call it yourself.
+    async initializeFile() {
+        let fileData;
+        try {
+            fileData = await fs.promises.readFile(this.#filePath, {encoding: "utf-8"});
+        } catch(e) {
+            // If file does not exist, create it
+            try {
+                await fs.promises.writeFile(this.#filePath, "{}");
+            } catch(e) {
+                console.error("Error creating token store file: " + e);
             }
+            return;
+        }
+        try {
+            this.#data = JSON.parse(fileData);
+        } catch(e) {
+            console.error("Unparsable token store file: " + e);
+        }
+    }
+
+    async onDataGet(service, guildId) {
+        if(!(guildId in this.#data) || !(service in this.#data[guildId]))
+            return null;
+        const serviceData = this.#data[guildId][service];
+        return {
+            refreshToken: serviceData.refreshToken,
+            accessToken: serviceData.accessToken,
+            expiryDate: new Date(serviceData.expiryDate)
         }
     }
 
     async onDataUpdate(service, guildId, newData) {
-        // TODO: Save new guild token info to local file (default behavior)
+        if(!(guildId in this.#data)) this.#data[guildId] = {};
+        this.#data[guildId][service] = newData;
+
+        try {
+            await fs.promises.writeFile(this.#filePath, JSON.stringify(this.#data));
+        } catch(e) {
+            console.error("Error writing token store file: " + e);
+        }
     }
 }

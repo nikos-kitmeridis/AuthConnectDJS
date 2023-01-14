@@ -1,0 +1,15 @@
+{
+  "name": "authconnect-tester",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
+  },
+  "author": "Yoonicode",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "fs": "^0.0.1-security",
+    "jest": "^29.3.1"
+  }
+}

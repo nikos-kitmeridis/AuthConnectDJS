@@ -8,7 +8,6 @@ export default class AuthConnect {
 
     constructor(client) {
         this.client = client;
-        this.useDefaultDataHandlers();
     }
 
     setDataHandlers(onDataGet, onDataUpdate) {
@@ -16,8 +15,9 @@ export default class AuthConnect {
         this.onDataUpdate = onDataUpdate;
     }
 
-    useDefaultDataHandlers() {
-        const localFileDataStore = new LocalFileDataStore();
+    useDefaultDataHandlers(filePath) {
+        const localFileDataStore = new LocalFileDataStore(filePath);
+        localFileDataStore.initializeFile();
         this.setDataHandlers(localFileDataStore.onDataGet, localFileDataStore.onDataUpdate); 
     }
 

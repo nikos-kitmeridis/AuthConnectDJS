@@ -21,6 +21,7 @@ bot.login(DISCORD_TOKEN);
 
 bot.on("ready", () => {
     auth = new AuthConnect(bot);
+    auth.useDefaultDataHandlers("./auth-data.json"); // Use the default local file data storage solution
 });
 
 bot.on("message", async message => {
@@ -45,6 +46,9 @@ bot.on("message", async message => {
 
 ## Extensibility and Avanced Usage
 
+### Easy local file data storage solution
+If you want an easy way to store your auth data in a local file, you can simply call the function `useDefaultDataHandlers(filePath)`. See API Reference for usage.
+
 ### Easy Firebase Firestore data storage solution
 If you want to store your auth data in Firebase Firestore, you can simply call the function `useFirestoreDataHandlers(firestore, collectionName)`. See API Reference for usage.
 
@@ -53,9 +57,7 @@ TODO: code example
 ```
 
 ### Custom data storage solution
-By default, AuthConnect stores tokens for each server in a local JSON file called `credentials.json`, as an easy way for amateur developers to get started.
-
-If your bot is more robust and you have a database set up, you can change this behavior by overriding the credential store and retrieve functions. Just call `setDataHandlers`. (Detailed in API Reference section below)
+If none of the built-in data storage solutions work for you and you have a database set up, you can change this behavior by overriding the credential store and retrieve functions. Just call `setDataHandlers`. (Detailed in API Reference section below)
 
 These callbacks will be called every time token data is requested or updated, so you will want to implement some simple caching solution to avoid unnecessary database calls.
 
@@ -122,7 +124,11 @@ This function should take three parameters, `service`, `guildId` and `newData`, 
 }
 ```
 
-### useDefaultDataHandlers(): void
+### useDefaultDataHandlers(filePath): void
+Parameter | Type | Description
+--- | --- | ---
+`filePath` | string | The path of the file in which to store the data.
+
 Resets the data storage behavior to the default local file solution.
 
 ### useFirestoreDataHandlers(firestore, collectionName): void
