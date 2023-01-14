@@ -1,20 +1,20 @@
 # AuthConnectDJS
 Plug-and-play solution for adding Google, Spotify, etc auth to your DiscordJS projects where you access external APIs.
 
-## Learn By Example
+# Learn By Example
 I've made plenty of open-source Discord bots which use this package:
 
 WIP
 
-## Installation
+# Installation
 Coming soon to NPM!
 
-## Google Cloud setup
+# Google Cloud setup
 1. From the Google Cloud Console, go to `APIs & Services` > `Credentials`.
 2. Add an OAuth Client ID.
 3. Add the following string as an Authorized Redirect URI: `https://authconnect-djs.web.app/redir.html`. This will allow your app to redirect to our website which will beam the data to your Discord bot.
 
-## Quickstart: Example Usage
+# Quickstart: Example Usage
 ```js
 import DiscordAPI from "discord.js";
 import AuthConnect from "authconnect-djs";
@@ -35,7 +35,7 @@ bot.on("messageCreate", async message => {
             message.channel.send("This server already has a Google account associated with it.");
         } else {
             // Replace `https://www.googleapis.com/auth/youtube` with the scopes you want to request: https://developers.google.com/identity/protocols/oauth2/scopes
-            const url = auth.generateAuthURL("google", message.guild.id, "YOUR_GOOGLE_CLIENT_ID", "https://www.googleapis.com/auth/youtube");
+            const url = auth.generateAuthURL("google", message.guild.id, "YOUR_GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_SECRET", "https://www.googleapis.com/auth/youtube");
             message.member.send(`Please visit this URL to log in: ${url}`); // DM the link to the admin
         }
     }
@@ -50,28 +50,28 @@ bot.on("messageCreate", async message => {
 
 ```
 
-## Extensibility and Avanced Usage
+# Extensibility and Avanced Usage
 
-### Easy local file data storage solution
+## Easy local file data storage solution
 If you want an easy way to store your auth data in a local file, you can simply call the function `useDefaultDataHandlers(filePath)`. See API Reference for usage.
 
-### Easy Firebase Firestore data storage solution
+## Easy Firebase Firestore data storage solution
 If you want to store your auth data in Firebase Firestore, you can simply call the function `useFirestoreDataHandlers(firestore, collectionName)`. See API Reference for usage.
 
 ```js
 TODO: code example
 ```
 
-### Custom data storage solution
+## Custom data storage solution
 If none of the built-in data storage solutions work for you and you have a database set up, you can change this behavior by overriding the credential store and retrieve functions. Just call `setDataHandlers`. (Detailed in API Reference section below)
 
 These callbacks will be called every time token data is requested or updated, so you will want to implement some simple caching solution to avoid unnecessary database calls.
 
-## API Reference
+# API Reference
 
-### class AuthConnect
+## class AuthConnect
 
-#### constructor(client)
+### constructor(client)
 
 Creates the AuthConnect object.
 
@@ -83,12 +83,13 @@ Parameter | Type | Description
 
 Checks if a guild has an account for a particular service associated with it.
 
-### generateAuthURL(service, guildId, clientId, scope): string
+### generateAuthURL(service, guildId, clientId, clientSecret, scope): string
 Parameter | Type | Description
 --- | --- | ---
 `service` | string | The service to check (e.g. "google", "spotify").
 `guildId` | string resolvable | The guild to check.
 `clientId` | string | The client ID of your app for the service. See the service's documentation for how to get this. This string is directly passed as a URL parameter to the service's auth URL.
+`clientId` | string | The client secret of your app for the service. See the service's documentation for how to get this. This string is directly passed as a URL parameter to the service's auth URL.
 `scope` | string | The scopes to request from the service. See the service's documentation for a list of scopes. This string is directly passed as a URL parameter to the service's auth URL.
 
 Generates an authorization URL for a guild admin to visit to link their account. This URL should then be sent to the guild admin via DM.
@@ -149,5 +150,5 @@ Parameter | Type | Description
 
 This function overrides the data save/update handlers with a plug-and-play solution to save data to Firestore database. See "Easy Firebase Firestore data storage solution" for example code.
 
-## <3
+# <3
 Development by [Eric Yoon](https://yoonicode.com). PRs welcome. Licensed under GNU GPL v3; see LICENSE for details.

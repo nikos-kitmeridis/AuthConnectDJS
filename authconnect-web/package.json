@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "author": "Yoonicode",
-  "license": "SEE LICENSE IN LICENSE"
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "firebase-functions": "^4.1.1"
+  }
 }

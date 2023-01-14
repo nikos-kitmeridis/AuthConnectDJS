@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/ericyoondotcom/AuthConnectDJS/issues"
   },
-  "homepage": "https://github.com/ericyoondotcom/AuthConnectDJS#readme"
+  "homepage": "https://github.com/ericyoondotcom/AuthConnectDJS#readme",
+  "dependencies": {
+    "firebase": "^9.15.0",
+    "node-fetch": "^3.3.0"
+  }
 }
