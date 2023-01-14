@@ -1,25 +1,14 @@
+import FirestoreDataStore from "./datastores/FirestoreDataStore";
+import LocalFileDataStore from "./datastores/LocalFileDataStore";
+
 export default class AuthConnect {
+    #client;
+    #onDataGet;
+    #onDataUpdate;
+
     constructor(client) {
         this.client = client;
-        this.onDataGet = (service, guildId) => {
-            // TODO: Retrieve guild token info from local file (default behavior)
-            return {
-                google: {
-                    refreshToken: "123",
-                    accessToken: "xyz",
-                    expiryDate: new Date()
-                },
-                spotify: {
-                    refreshToken: "123",
-                    accessToken: "xyz",
-                    expiryDate: new Date()
-                }
-            }
-        };
-        this.onDataUpdate = (service, guildId, newData) => {
-            // TODO: Save new guild token info to local file (default behavior)
-            
-        };
+        this.useDefaultDataHandlers();
     }
 
     setDataHandlers(onDataGet, onDataUpdate) {
@@ -27,11 +16,25 @@ export default class AuthConnect {
         this.onDataUpdate = onDataUpdate;
     }
 
-    isGuildLoggedIn(service, guildId) {
+    useDefaultDataHandlers() {
+        const localFileDataStore = new LocalFileDataStore();
+        this.setDataHandlers(localFileDataStore.onDataGet, localFileDataStore.onDataUpdate); 
+    }
 
+    useFirestoreDataHandlers(firestore, collectionName) {
+        const firestoreDataStore = new FirestoreDataStore();
+        this.setDataHandlers(firestoreDataStore.onDataGet, firestoreDataStore.onDataUpdate);
+    }
+
+    isGuildLoggedIn(service, guildId) {
+        // TODO
     }
 
     generateAuthUrl(service, guildId) {
+        // TODO
+    }
 
+    getAccessToken(service, guildId) {
+        // TODO
     }
 }

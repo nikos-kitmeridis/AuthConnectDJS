@@ -45,6 +45,13 @@ bot.on("message", async message => {
 
 ## Extensibility and Avanced Usage
 
+### Easy Firebase Firestore data storage solution
+If you want to store your auth data in Firebase Firestore, you can simply call the function `useFirestoreDataHandlers(firestore, collectionName)`. See API Reference for usage.
+
+```js
+TODO: code example
+```
+
 ### Custom data storage solution
 By default, AuthConnect stores tokens for each server in a local JSON file called `credentials.json`, as an easy way for amateur developers to get started.
 
@@ -87,7 +94,7 @@ Parameter | Type | Description
 
 Gets the saved access token to use to call APIs. This function will automatically refresh the token if it has expired.
 
-#### setDataHandlers(onDataGet, onDataUpdate): void
+### setDataHandlers(onDataGet, onDataUpdate): void
 Parameter | Type | Description
 --- | --- | ---
 `onDataGet` | function (see below) | A callback that should return the data for a guild.
@@ -95,7 +102,7 @@ Parameter | Type | Description
 
 Overrides the default local file data storage solution (see "Custom data storage solution"). Call this function right after you call the constructor.
 
-##### onDataGet(service, guildId): object
+#### async onDataGet(service, guildId): object
 This function should take two parameters, `service` and `guildId`, and return a Promise that returns the guild's data for the given service (e.g. "google", "spotify"), in the following format:
 ```json
 {
@@ -105,7 +112,7 @@ This function should take two parameters, `service` and `guildId`, and return a 
 }
 ```
 
-##### onDataSet(service, guildId, newData): void
+#### async onDataSet(service, guildId, newData): void
 This function should take three parameters, `service`, `guildId` and `newData`, and return a Promise that sets the guild's data for the given service (e.g. "google", "spotify"), which will be in the following format:
 ```json
 {
@@ -114,6 +121,17 @@ This function should take three parameters, `service`, `guildId` and `newData`, 
     "expiryDate": Date?
 }
 ```
+
+### useDefaultDataHandlers(): void
+Resets the data storage behavior to the default local file solution.
+
+### useFirestoreDataHandlers(firestore, collectionName): void
+Parameter | Type | Description
+--- | --- | ---
+`firestore` | [Firestore object](https://googleapis.dev/nodejs/firestore/latest/Firestore.html) | The Firestore object created by the Firestore Admin SDK.
+`collectionName` | string | The path of the collection in which to store documents with guild token data.
+
+This function overrides the data save/update handlers with a plug-and-play solution to save data to Firestore database. See "Easy Firebase Firestore data storage solution" for example code.
 
 ## <3
 Development by [Eric Yoon](https://yoonicode.com). PRs welcome. Licensed under GNU GPL v3; see LICENSE for details.
