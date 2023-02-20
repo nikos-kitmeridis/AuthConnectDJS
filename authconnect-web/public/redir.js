@@ -11,22 +11,37 @@ const FIREBASE_CONFIG = {
 };
 
 async function onLoad() {
+    document.getElementById("about").onclick = () => {
+        const textElem = document.getElementById("about-explainer");
+        textElem.style.display = textElem.style.display === "block" ? "none" : "block";
+    }
+
     const firebase = initializeApp(FIREBASE_CONFIG);
     const functions = getFunctions(firebase);
 
     const errorElem = document.getElementById("error");
     const successElem = document.getElementById("success");
-    
+    const loadingElem = document.getElementById("loading");
+
+    function displayError(text) {
+        loadingElem.innerText = "";
+        errorElem.innerText = text;
+    }
+    function displaySuccess(text) {
+        loadingElem.innerText = "";
+        successElem.innerText = text;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const state = urlParams.get("state");
     const code = urlParams.get("code");
     
     if(!state) {
-        errorElem.innerText = "Error: invalid state.";
+        displayError("Error: invalid state.");
         return;
     }
     if(!code) {
-        errorElem.innerText = "Error: no auth code received.";
+        displayError("Error: no auth code received.");
         return;
     }
 
@@ -35,11 +50,11 @@ async function onLoad() {
     try {
         res = await createAuthResult({state: state, code: code});
     } catch(e) {
-        errorElem.innerText = "Error: " + e;
+        displayError("Error: " + e);
         return;
     }
     if(res.data && res.data.success) {
-        successElem.innerText = "Success! You can now close this window.";
+        displaySuccess("Success! You can now return to Discord.");
     }
 }
 

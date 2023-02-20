@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html>
     <head>
         <script type="module" src="./redir.js"></script>
@@ -6,8 +7,24 @@
     </head>
     <body>
         <h1>Account linked!</h1>
-        <h2>Hold on a sec, we're sending your account info back to the Discord bot.</h2>
-        <p id="error"></p>
-        <p id="success"></p>
+        <h2 id="loading">Hold on, sending your info back to the Discord bot...</h2>
+        <h2 id="error"></h2>
+        <h2 id="success"></h2>
+        
+        <div id="about">
+            <p id="about-header">What is this? 👇</p>
+            <p id="about-explainer">
+                AuthConnect is a solution for Discord bot developers to allow their users to
+                link social accounts, like Google or Spotify, to their bots.<br /><br />
+                AuthConnect itself does not request any of your account data and cannot
+                see your Discord information, though the bot you're linking will be able
+                to access the data which you have authorized to share. You can revoke
+                access at any time through the provider's (Google, Spotify, etc) website.<br /><br />
+                AuthConnect is not affiliated with Discord or the developer of the bot.<br /><br />
+                <a href="https://github.com/ericyoondotcom/authconnectdjs">
+                    View the AuthConnect project on Github.
+                </a>
+            </p>
+        </div>
     </body>
 </html>
