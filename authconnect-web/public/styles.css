@@ -49,3 +49,8 @@ h2 {
 #about-explainer {
     display: none;
 }
+
+a, a:visited {
+    color: #5865F2;
+    text-decoration: underline #5865F2;
+}
