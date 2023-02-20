@@ -64,7 +64,7 @@ export default class AuthConnect {
         const serviceConstantsData = this.#serviceConstants[service];
         if(!serviceConstantsData) throw new Error("No service constants found for service " + service + ". Did you forget to pass them to the constructor?");
 
-        const result = await fetch(serviceData.authCodeExchangeUrl, {
+        const result = await fetch(serviceData.tokenUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -85,11 +85,46 @@ export default class AuthConnect {
         }
         const expiryDate = new Date();
         expiryDate.setSeconds(expiryDate.getSeconds() + json.expires_in);
+        console.log(json);
         this.#onDataUpdate(service, guildId, {
             refreshToken: json.refresh_token,
             accessToken: json.access_token,
             expiryDate
         });
+    }
+
+    async #refreshToken(service, guildId, refreshToken) {
+        const serviceData = SERVICES[service];
+        if(!serviceData) throw new Error("Invalid service: " + service);
+        const serviceConstantsData = this.#serviceConstants[service];
+        if(!serviceConstantsData) throw new Error("No service constants found for service " + service + ". Did you forget to pass them to the constructor?");
+
+        const result = await fetch(serviceData.tokenUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: refreshToken,
+                client_id: serviceConstantsData.clientId,
+                client_secret: serviceConstantsData.clientSecret
+            })
+        });
+        const json = await result.json();
+        if("error" in json){
+            console.error("Error returned by refresh token endpoint!");
+            console.error(json);
+            return;
+        }
+        const expiryDate = new Date();
+        expiryDate.setSeconds(expiryDate.getSeconds() + json.expires_in);
+        this.#onDataUpdate(service, guildId, {
+            refreshToken,
+            accessToken: json.access_token,
+            expiryDate
+        });
+        console.log("Refreshed token: " + json.access_token)
     }
 
     setDataHandlers(onDataGet, onDataUpdate) {
@@ -109,7 +144,10 @@ export default class AuthConnect {
     }
 
     async isGuildLoggedIn(service, guildId) {
-        return await this.#onDataGet(service, guildId) != null;
+        if(!this.#onDataGet) throw new Error("No data handlers set. You likely forgot to call either useDefaultDataHandlers, useFirestoreDataHandlers, or setDataHandlers.");
+        const data = await this.#onDataGet(service, guildId);
+        if(!data || !data.refreshToken) return false;
+        return true;
     }
 
     generateAuthURL(service, guildId, scope) {
@@ -135,7 +173,17 @@ export default class AuthConnect {
         return url;
     }
 
-    getAccessToken(service, guildId) {
-        // TODO
+    async getAccessToken(service, guildId) {
+        if(!this.#onDataGet) throw new Error("No data handlers set. You likely forgot to call either useDefaultDataHandlers, useFirestoreDataHandlers, or setDataHandlers.");
+        const data = await this.#onDataGet(service, guildId);
+        if(!data) return null;
+        if(!data.accessToken || !data.expiryDate || data.expiryDate.getTime() - Date.now() <= 0) {
+            if(!data.refreshToken) {
+                console.error("Could not refresh token, as there is no saved refresh token.");
+                return null;
+            }
+            await this.#refreshToken(service, guildId, data.refreshToken);
+        }
+        return data.accessToken;
     }
 }

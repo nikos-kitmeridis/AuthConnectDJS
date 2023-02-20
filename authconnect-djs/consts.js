@@ -13,12 +13,12 @@ export const FIREBASE_CONFIG = {
 export const SERVICES = {
     spotify: {
         authUrl: "https://accounts.spotify.com/authorize?client_id={{CLIENT_ID}}&response_type=code&redirect_uri={{REDIR}}&scope={{SCOPE}}&state={{STATE}}",
-        authCodeExchangeUrl: "https://accounts.spotify.com/api/token",
+        tokenUrl: "https://accounts.spotify.com/api/token",
     },
     google: {
-        authUrl: "https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=code&redirect_uri={{REDIR}}&scope={{SCOPE}}&access_type=offline&state={{STATE}}",
-        authCodeExchangeUrl: "https://oauth2.googleapis.com/token",
-    }
+        authUrl: "https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=code&redirect_uri={{REDIR}}&scope={{SCOPE}}&access_type=offline&state={{STATE}}&prompt=consent",
+        tokenUrl: "https://oauth2.googleapis.com/token",
+    },
 };
 
 export const generateRandomString = () => Math.random().toString(36).substring(2);

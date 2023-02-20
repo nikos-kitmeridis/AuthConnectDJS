@@ -40,11 +40,25 @@ bot.on("messageCreate", async message => {
         }
     }
 
-    if(message.content === "call an API") {
+    if(message.guild !== null && message.content === "call an API") {
         if(await auth.isGuildLoggedIn("google", message.guild.id)) {
-            const token = auth.getAccessToken("google", message.guild.id);
-            message.channel.send("The token is: " + token);
+            const token = await auth.getAccessToken("google", message.guild.id);
+
             // Now you can use this token to call Google APIs!
+            message.channel.send(
+                `My access token is \`${token}\`!\n` +
+                "I can use this token to call a Google API, such as this Youtube search endpoint:\n" +
+                "```js\n" +
+                "await fetch('https://www.googleapis.com/youtube/v3/search', {\n" +
+                "    headers: {\n" +
+                `        'Authorization': 'Bearer ${token}',\n` +
+                "        'Content-Type': 'application/json',\n" +
+                "    },\n" +
+                "});\n" +
+                "```"
+            );
+        } else {
+            message.channel.send("This server is not logged in to Google. Have an administrator type `login`.");
         }
     }
 });

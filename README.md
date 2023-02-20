@@ -85,13 +85,17 @@ Generates an authorization URL for a guild admin to visit to link their account.
 The user will be redirected to a Yoonicode-owned website which will upload their account token to our servers.
 AuthConnect will then poll our servers for data every 5 seconds for 5 minutes, at which point you should consider the URL expired and have the user request a new one.
 
-### getAccessToken(service, guildId): string
+### async getAccessToken(service, guildId): string?
 Parameter | Type | Description
 --- | --- | ---
 `service` | string | The service (e.g. "google", "spotify").
 `guildId` | string resolvable | The guild for which to get the access token.
 
 Gets the saved access token to use to call APIs. This function will automatically refresh the token if it has expired.
+
+Returns `null` if no account has been linked yet. Otherwise, returns the access token.
+
+> ⚠️ Note that for most services, you should prepend `Bearer ` to the token before you send your request.
 
 ### setDataHandlers(onDataGet, onDataUpdate): void
 Parameter | Type | Description
