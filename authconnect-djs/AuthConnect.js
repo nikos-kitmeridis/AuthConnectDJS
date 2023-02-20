@@ -8,6 +8,7 @@ import LocalFileDataStore from "./datastores/LocalFileDataStore.js";
 export default class AuthConnect {
     #onDataGet;
     #onDataUpdate;
+    #onLinked;
     #firebaseApp;
     #functions;
     #pollFunction;
@@ -90,6 +91,8 @@ export default class AuthConnect {
             accessToken: json.access_token,
             expiryDate
         });
+
+        if(this.#onLinked) this.#onLinked(service, guildId);
     }
 
     async #refreshToken(service, guildId, refreshToken) {
@@ -185,5 +188,9 @@ export default class AuthConnect {
             data = await this.#onDataGet(service, guildId);
         }
         return data.accessToken;
+    }
+
+    setLinkedCallback(onLinked) {
+        this.#onLinked = onLinked;
     }
 }

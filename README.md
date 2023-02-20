@@ -243,5 +243,15 @@ See "Easy Firebase Firestore data storage solution" above.
 
 Uses Firebase Firestore as a data storage solution. Call this function right after you call the constructor.
 
+### setLinkedCallback(onLinked): void
+Parameter | Type | Description
+--- | --- | ---
+`onLinked` | function (see below) | A function that is called whenever a user links their account.
+
+It's often useful for a user to know when their account has been successfully linked. You can call a side effect, e.g. sending a DM to the user, by passing a callback to this function.
+
+#### async onLinked(service, guildId): void
+This function takes the parameters `service` and `guildId`.
+
 # <3
 Development by [Eric Yoon](https://yoonicode.com). PRs welcome. Licensed under GNU GPL v3; see LICENSE for details.

@@ -24,7 +24,16 @@ const bot = new Client({
 });
 let auth;
 
+const linker = {};
+
 bot.login(DISCORD_TOKEN);
+
+const linkedCallback = async (service, guildId) => {
+    if(linker[guildId]) {
+        linker[guildId].send(`Your server is now linked to ${service}!`);
+        delete linker[guildId];
+    }
+}
 
 bot.on("ready", () => {
     auth = new AuthConnect({
@@ -34,6 +43,7 @@ bot.on("ready", () => {
         }
     });
     auth.useFirestoreDataHandlers(firestore, "server_auth_data");
+    auth.setLinkedCallback(linkedCallback);
     console.log("Bot ready, and AuthConnect initialized.")
 });
 
@@ -46,6 +56,7 @@ bot.on("messageCreate", async message => {
             const url = auth.generateAuthURL("google", message.guild.id, "https://www.googleapis.com/auth/youtube");
             message.channel.send("Please check your DMs for a link to log in.");
             message.member.send(`Please visit this URL to log in: ${url}`); // DM the link to the admin
+            linker[message.guild.id] = message.member;
         }
     }
 
