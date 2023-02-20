@@ -2,3 +2,5 @@ node_modules/
 package-lock.json
 auth-data.json
 secrets.js
+firebase-admin-key.json
+.DS_Store

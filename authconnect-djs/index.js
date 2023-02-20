@@ -1,3 +1,3 @@
-import AuthConnect from "./AuthConnect";
+import AuthConnect from "./AuthConnect.js";
 
 export default AuthConnect;

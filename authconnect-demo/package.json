@@ -1,0 +1,17 @@
+{
+  "name": "authconnect-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "demo.js",
+  "type": "module",
+  "scripts": {
+    "start": "node demo.js"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "authconnect-djs": "file:../authconnect-djs",
+    "discord.js": "^14.7.1",
+    "firebase-admin": "^11.5.0"
+  }
+}

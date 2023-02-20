@@ -1,6 +1,15 @@
-import AuthConnect from "../../authconnect-djs/AuthConnect.js";
+import AuthConnect from "authconnect-djs";
+import firebase from "firebase-admin";
 import {Client, GatewayIntentBits} from "discord.js";
-import { DISCORD_TOKEN, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "./secrets.js";
+import { DISCORD_TOKEN, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, DATABASE_URL } from "./secrets.js";
+import serviceAccount from "./firebase-admin-key.json" assert {type: "json"};
+
+firebase.initializeApp({
+    credential: firebase.credential.cert(serviceAccount),
+    databaseURL: DATABASE_URL
+});
+
+const firestore = firebase.firestore();
 
 const bot = new Client({
     intents: [
@@ -24,7 +33,7 @@ bot.on("ready", () => {
             clientSecret: GOOGLE_CLIENT_SECRET
         }
     });
-    auth.useDefaultDataHandlers("./demo/auth-data.json");
+    auth.useFirestoreDataHandlers(firestore, "server_auth_data");
     console.log("Bot ready, and AuthConnect initialized.")
 });
 

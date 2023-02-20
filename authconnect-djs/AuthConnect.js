@@ -85,7 +85,6 @@ export default class AuthConnect {
         }
         const expiryDate = new Date();
         expiryDate.setSeconds(expiryDate.getSeconds() + json.expires_in);
-        console.log(json);
         this.#onDataUpdate(service, guildId, {
             refreshToken: json.refresh_token,
             accessToken: json.access_token,
@@ -119,12 +118,11 @@ export default class AuthConnect {
         }
         const expiryDate = new Date();
         expiryDate.setSeconds(expiryDate.getSeconds() + json.expires_in);
-        this.#onDataUpdate(service, guildId, {
+        await this.#onDataUpdate(service, guildId, {
             refreshToken,
             accessToken: json.access_token,
             expiryDate
         });
-        console.log("Refreshed token: " + json.access_token)
     }
 
     setDataHandlers(onDataGet, onDataUpdate) {
@@ -139,7 +137,7 @@ export default class AuthConnect {
     }
 
     useFirestoreDataHandlers(firestore, collectionName) {
-        const firestoreDataStore = new FirestoreDataStore();
+        const firestoreDataStore = new FirestoreDataStore(firestore, collectionName);
         this.setDataHandlers(firestoreDataStore.onDataGet.bind(firestoreDataStore), firestoreDataStore.onDataUpdate.bind(firestoreDataStore));
     }
 
@@ -175,7 +173,7 @@ export default class AuthConnect {
 
     async getAccessToken(service, guildId) {
         if(!this.#onDataGet) throw new Error("No data handlers set. You likely forgot to call either useDefaultDataHandlers, useFirestoreDataHandlers, or setDataHandlers.");
-        const data = await this.#onDataGet(service, guildId);
+        let data = await this.#onDataGet(service, guildId);
         if(!data) return null;
         if(!data.accessToken || !data.expiryDate || data.expiryDate.getTime() - Date.now() <= 0) {
             if(!data.refreshToken) {
@@ -183,6 +181,8 @@ export default class AuthConnect {
                 return null;
             }
             await this.#refreshToken(service, guildId, data.refreshToken);
+            // data is now stale, re-fetch
+            data = await this.#onDataGet(service, guildId);
         }
         return data.accessToken;
     }

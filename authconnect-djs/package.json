@@ -21,6 +21,7 @@
   "homepage": "https://github.com/ericyoondotcom/AuthConnectDJS#readme",
   "dependencies": {
     "firebase": "^9.15.0",
+    "firebase-admin": "^11.5.0",
     "node-fetch": "^3.3.0"
   }
 }
