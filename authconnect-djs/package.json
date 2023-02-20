@@ -1,6 +1,6 @@
 {
   "name": "authconnect-djs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Plug-and-play solution for adding Google, Spotify, etc auth to your DiscordJS projects where you access external APIs.",
   "main": "index.js",
   "type": "module",

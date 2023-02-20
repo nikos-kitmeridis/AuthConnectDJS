@@ -9,7 +9,10 @@ I've made plenty of open-source Discord bots which use this package:
 Or, for minimum code to get started, view the Quickstart section below!
 
 # Installation
-Coming soon to NPM!
+[Get it from NPM.](https://www.npmjs.com/package/authconnect-djs)
+```bash
+npm install authconnect-djs
+```
 
 # Service-specific setup
 
