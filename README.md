@@ -94,7 +94,7 @@ bot.on("messageCreate", async message => {
             
             // You can use this token to call a Google API, such as this Youtube search endpoint:
             /*
-            await fetch(await fetch("https://www.googleapis.com/youtube/v3/search", {
+            await fetch("https://www.googleapis.com/youtube/v3/search", {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",
