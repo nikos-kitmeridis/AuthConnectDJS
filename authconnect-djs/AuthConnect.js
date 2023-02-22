@@ -190,6 +190,23 @@ export default class AuthConnect {
         return data.accessToken;
     }
 
+    async getAccessTokenExpiryDate(service, guildId) {
+        if(!this.#onDataGet) throw new Error("No data handlers set. You likely forgot to call either useDefaultDataHandlers, useFirestoreDataHandlers, or setDataHandlers.");
+        let data = await this.#onDataGet(service, guildId);
+        if(!data) return null;
+        if(!data.accessToken || !data.expiryDate) return null;
+        return data.expiryDate;
+    }
+
+    async getRefreshToken(service, guildId) {
+        if(!this.#onDataGet) throw new Error("No data handlers set. You likely forgot to call either useDefaultDataHandlers, useFirestoreDataHandlers, or setDataHandlers.");
+        let data = await this.#onDataGet(service, guildId);
+        if(!data) return null;
+        if(!data.refreshToken) return null;
+        return data.refreshToken;
+    }
+
+
     setLinkedCallback(onLinked) {
         this.#onLinked = onLinked;
     }

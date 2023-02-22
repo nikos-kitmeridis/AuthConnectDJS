@@ -63,7 +63,8 @@ bot.on("messageCreate", async message => {
     if(message.guild !== null && message.content === "call an API") {
         if(await auth.isGuildLoggedIn("google", message.guild.id)) {
             const token = await auth.getAccessToken("google", message.guild.id);
-
+            const expiryDate = await auth.getAccessTokenExpiryDate("google", message.guild.id);
+            const refreshToken = await auth.getRefreshToken("google", message.guild.id);
             // Now you can use this token to call Google APIs!
             message.channel.send(
                 `My access token is \`${token}\`!\n` +
@@ -75,7 +76,9 @@ bot.on("messageCreate", async message => {
                 "        'Content-Type': 'application/json',\n" +
                 "    },\n" +
                 "});\n" +
-                "```"
+                "```\n\n" +
+                `This access token expires at \`${expiryDate.toISOString()}\`.\n` +
+                `When the token expires, a new one will be generated using the refresh token \`${refreshToken}\`.`
             );
         } else {
             message.channel.send("This server is not logged in to Google. Have an administrator type `login`.");
