@@ -8,6 +8,7 @@ Plug-and-play solution for adding Google, Spotify, etc auth to your DiscordJS pr
 - 🌐 **Pre-built redirect page**: Once users sign in, they are presented with a beautiful page. The auth data is automatically beamed to your server; you don't have to make your own page or query us for the result.
 - 🔄 **Automatic token refresh**: We automatically get up-to-date access tokens for you. No need to deal with refresh tokens.
 - 🔢 **Supports many services**: We currently support Google and Spotify login. If you need another service, open an issue and I'll add it!
+- 🔒 **Your data is safe**: Due to the way OAuth2 is built, AuthConnect cannot make API requests on your behalf and canot access your users' data, since the library cannot exchange the returned authorization code for a token without your client secret.
 
 ## AuthConnect Flow, Simplified
 1. You call `generateAuthURL()` and show your users the link.
