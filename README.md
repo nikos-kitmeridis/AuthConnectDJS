@@ -91,7 +91,7 @@ bot.on("messageCreate", async message => {
     if(message.guild !== null && message.content === "call an API") {
         if(await auth.isGuildLoggedIn("google", message.guild.id)) {
             const token = await auth.getAccessToken("google", message.guild.id);
-            message.channel.send(`My access token is \`${token}\`!`
+            message.channel.send(`My access token is \`${token}\`!`);
             
             // You can use this token to call a Google API, such as this Youtube search endpoint:
             /*
