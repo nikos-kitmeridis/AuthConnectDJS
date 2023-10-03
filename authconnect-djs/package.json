@@ -2,8 +2,7 @@
   "name": "authconnect-djs",
   "version": "1.1.0",
   "description": "Plug-and-play solution for adding Google, Spotify, etc auth to your DiscordJS projects where you access external APIs.",
-  "main": "index.js",
-  "type": "module",
+  "main": "index.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ericyoondotcom/AuthConnectDJS.git"
@@ -20,8 +19,15 @@
   },
   "homepage": "https://github.com/ericyoondotcom/AuthConnectDJS#readme",
   "dependencies": {
+    "@mysten/bcs": "^0.7.4",
+    "@mysten/sui.js": "^0.42.0",
+    "@mysten/wallet-kit": "^0.7.2",
+    "@mysten/zklogin": "^0.1.4",
+    "@types/axios": "^0.14.0",
+    "@types/jwt-decode": "^3.1.0",
+    "@types/node-fetch": "^2.6.6",
+    "axios": "^1.5.1",
     "firebase": "^9.15.0",
-    "firebase-admin": "^11.5.0",
-    "node-fetch": "^3.3.0"
+    "firebase-admin": "^11.5.0"
   }
 }

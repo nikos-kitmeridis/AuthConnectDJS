@@ -10,13 +10,13 @@ export const FIREBASE_CONFIG = {
     appId: "1:343281822649:web:e07c207b706944470de468"
 };
 
-export const SERVICES = {
+export const SERVICES: any = {
     spotify: {
         authUrl: "https://accounts.spotify.com/authorize?client_id={{CLIENT_ID}}&response_type=code&redirect_uri={{REDIR}}&scope={{SCOPE}}&state={{STATE}}",
         tokenUrl: "https://accounts.spotify.com/api/token",
     },
     google: {
-        authUrl: "https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=code&redirect_uri={{REDIR}}&scope={{SCOPE}}&access_type=offline&state={{STATE}}&prompt=consent",
+        authUrl: "https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=code&redirect_uri={{REDIR}}&scope={{SCOPE}}&access_type=offline&state={{STATE}}&prompt=consent&nonce={{NONCE}}",
         tokenUrl: "https://oauth2.googleapis.com/token",
     },
 };

@@ -1,20 +1,20 @@
 import firebase from "firebase-admin";
 
 export default class FirestoreDataStore {
-    #data = {};
-    #firestore;
-    #collectionName;
+    data: any = {};
+    firestore: any;
+    collectionName: any;
 
-    constructor(firestore, collectionName) {
-        this.#firestore = firestore;
-        this.#collectionName = collectionName;
+    constructor(firestore: any, collectionName: any) {
+        this.firestore = firestore;
+        this.collectionName = collectionName;
     }
     
-    async onDataGet(service, guildId) {
-        if(guildId in this.#data) {
-            if(!this.#data[guildId]) return null;
-            if(!(service in this.#data[guildId])) return null;
-            const serviceData = this.#data[guildId][service];
+    async onDataGet(service: any, guildId: any) {
+        if(guildId in this.data) {
+            if(!this.data[guildId]) return null;
+            if(!(service in this.data[guildId])) return null;
+            const serviceData = this.data[guildId][service];
             return {
                 refreshToken: serviceData.refreshToken,
                 accessToken: serviceData.accessToken,
@@ -26,20 +26,20 @@ export default class FirestoreDataStore {
 
         let data;
         try {
-            data = await this.#firestore.collection(this.#collectionName).doc(guildId).get();
+            data = await this.firestore.collection(this.collectionName).doc(guildId).get();
         } catch(e) {
             console.error("Firestore error in onDataGet");
             console.error(e);
             return null;
         }
         if(!data.exists) {
-            this.#data[guildId] = null;
+            this.data[guildId] = null;
             return null;
         }
 
-        this.#data[guildId] = data.data();
-        if(!(service in this.#data[guildId])) return null;
-        const serviceData = this.#data[guildId][service];
+        this.data[guildId] = data.data();
+        if(!(service in this.data[guildId])) return null;
+        const serviceData = this.data[guildId][service];
         return {
             refreshToken: serviceData.refreshToken,
             accessToken: serviceData.accessToken,
@@ -47,12 +47,12 @@ export default class FirestoreDataStore {
         };
     }
 
-    async onDataUpdate(service, guildId, newData) {
-        if(!this.#data[guildId]) this.#data[guildId] = {};
-        this.#data[guildId][service] = newData;
+    async onDataUpdate(service: any, guildId: any, newData: any) {
+        if(!this.data[guildId]) this.data[guildId] = {};
+        this.data[guildId][service] = newData;
 
         try {
-            await this.#firestore.collection(this.#collectionName).doc(guildId).set({
+            await this.firestore.collection(this.collectionName).doc(guildId).set({
                 [service]: newData
             }, {merge: true});
         } catch(e) {
