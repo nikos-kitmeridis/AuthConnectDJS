@@ -5,9 +5,6 @@ import {getFunctions, httpsCallable} from "firebase/functions";
 import FirestoreDataStore from "./datastores/FirestoreDataStore";
 import LocalFileDataStore from "./datastores/LocalFileDataStore";
 import {useSui} from "./useSui";
-import {generateNonce, generateRandomness} from '@mysten/zklogin';
-import {Ed25519Keypair} from '@mysten/sui.js/keypairs/ed25519';
-import { UserKeyData } from "./UserInfo";
 import {SuiClient} from "@mysten/sui.js/client";
 import StorageEmulator from "./StorageEmulator";
 
@@ -164,40 +161,6 @@ export default class AuthConnect {
         return true;
     }
 
-    async prepareLogin() {
-        const {epoch, epochDurationMs, epochStartTimestampMs} = await this.suiClient.getLatestSuiSystemState();
-
-
-        const maxEpoch = parseInt(epoch) + 2; // this means the ephemeral key will be active for 2 epochs from now.
-        const ephemeralKeyPair = new Ed25519Keypair();
-        const ephemeralPrivateKeyB64 = ephemeralKeyPair.export().privateKey;
-
-
-        const ephemeralPublicKey = ephemeralKeyPair.getPublicKey()
-        const ephemeralPublicKeyB64 = ephemeralPublicKey.toBase64();
-
-        const jwt_randomness = generateRandomness();
-        const nonce = generateNonce(ephemeralPublicKey, maxEpoch, jwt_randomness);
-
-        console.log("current epoch = " + epoch);
-        console.log("maxEpoch = " + maxEpoch);
-        console.log("jwt_randomness = " + jwt_randomness);
-        console.log("ephemeral public key = " + ephemeralPublicKey);
-        console.log("nonce = " + nonce);
-
-        const userKeyData: UserKeyData = {
-            randomness: jwt_randomness.toString(),
-            nonce: nonce,
-            ephemeralPublicKey: ephemeralPublicKeyB64,
-            ephemeralPrivateKey: ephemeralPrivateKeyB64,
-            maxEpoch: maxEpoch
-        }
-
-        this.storageEmulator.store['userKeyData'] = JSON.stringify(userKeyData);
-
-        return userKeyData
-    }
-
     getLocalStoragePropertyDescriptor(): any {
         const iframe = document.createElement('iframe');
         document.head.append(iframe);
@@ -206,7 +169,7 @@ export default class AuthConnect {
         return pd;
     }
 
-    async generateAuthURL(service: any, guildId: any, scope: any) {
+    async generateAuthURL(service: any, guildId: any, scope: any, nonce: string) {
         const serviceData = SERVICES[service];
         if(!serviceData) throw new Error("Invalid service argument.");
         const serviceConstantsData = this.serviceConstants[service];
@@ -220,14 +183,12 @@ export default class AuthConnect {
             expires: new Date(Date.now() + POLL_EXPIRY)
         })
 
-        const userKeyData = await this.prepareLogin();
-        
         const url = serviceData.authUrl
             .replace("{{CLIENT_ID}}", encodeURIComponent(serviceConstantsData.clientId))
             .replace("{{REDIR}}", encodeURIComponent(WEB_REDIRECT_URL))
             .replace("{{SCOPE}}", encodeURIComponent(scope))
             .replace("{{STATE}}", encodeURIComponent(state))
-            .replace("{{NONCE}}", encodeURIComponent(userKeyData.nonce));
+            .replace("{{NONCE}}", encodeURIComponent(nonce));
         console.log(url);
         return url;
     }
